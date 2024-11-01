@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dhruv.config.JwtProvider;
 import com.dhruv.exception.UserException;
+import com.dhruv.model.Cart;
 import com.dhruv.model.User;
 import com.dhruv.repo.UserRepository;
 import com.dhruv.request.LoginRequest;
 import com.dhruv.response.AuthResponse;
+import com.dhruv.service.CartService;
 import com.dhruv.service.CustomerUserServiceImplementation;
 
 @RestController
@@ -37,6 +39,9 @@ public class AuthController {
 
 	@Autowired
 	private CustomerUserServiceImplementation customerUserServiceImplementation;
+	
+	@Autowired
+	private CartService cartService;
 
 	@PostMapping("/signup")
 	public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws UserException {
@@ -57,6 +62,7 @@ public class AuthController {
 		createdUser.setLastName(lastName);
 
 		User savedUser = userRepository.save(createdUser);
+		Cart cart = cartService.createCart(savedUser);
 
 		Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
 		SecurityContextHolder.getContext().setAuthentication(authentication);

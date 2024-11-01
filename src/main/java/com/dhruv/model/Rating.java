@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
+import java.time.*;
 @Entity
 public class Rating {
 	
@@ -27,6 +27,8 @@ public class Rating {
 	
 	
 	private double rating;
+	
+	private LocalDateTime createdAt;
 
 
 	public Rating() {
@@ -35,12 +37,13 @@ public class Rating {
 	}
 
 
-	public Rating(Long id, User user, Product product, double rating) {
+	public Rating(Long id, User user, Product product, double rating, LocalDateTime createdAt) {
 		super();
 		this.id = id;
 		this.user = user;
 		this.product = product;
 		this.rating = rating;
+		this.createdAt = createdAt;
 	}
 
 
@@ -81,7 +84,20 @@ public class Rating {
 
 	public void setRating(double rating) {
 		this.rating = rating;
-	}  
+	}
+
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+
+	
 	
 	
 }
