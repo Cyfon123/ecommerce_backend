@@ -43,7 +43,7 @@ public class PaymentController {
 	@Autowired
 	private OrderRepository orderRepository;
 	
-	@PostMapping
+	@PostMapping("/payments/{orderId}")
 	public ResponseEntity<PaymentLinkResponse> createPaymentLink(@PathVariable Long orderId,
 			@RequestHeader("Authorization") String jwt) throws OrderException, RazorpayException
 	{
