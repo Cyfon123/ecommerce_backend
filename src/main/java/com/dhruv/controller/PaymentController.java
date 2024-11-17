@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -30,9 +31,7 @@ public class PaymentController {
 	@Value("${razorpay.api.key}")
 	String apiKey;
 	
-	@Value("$"
-			+ ""
-			+ "{razorpay.api.secret}")
+	@Value("${razorpay.api.secret}")
 	String apiSecret;
 	
 	@Autowired
@@ -94,6 +93,7 @@ public class PaymentController {
 	
 	}
 
+	@GetMapping("/payments")
 	public ResponseEntity<ApiResponse> redirect(@RequestParam(name="payment_id")String paymentId, @RequestParam(name="order_id")Long orderId) throws OrderException, RazorpayException
 	{
 		Order order = orderService.findOrderById(orderId);
