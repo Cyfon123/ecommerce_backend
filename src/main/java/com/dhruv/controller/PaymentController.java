@@ -55,7 +55,7 @@ public class PaymentController {
 			
 			JSONObject paymentLinkRequest = new JSONObject();
 			
-			paymentLinkRequest.put("amount", order.getTotalPrice()*100);
+			paymentLinkRequest.put("amount", order.getTotalDiscountedPrice()*100);
 			paymentLinkRequest.put("currency", "INR");
 			
 			JSONObject customer = new JSONObject();
@@ -68,7 +68,8 @@ public class PaymentController {
 			notify.put("email", true);
 			paymentLinkRequest.put("notify", notify);
 			
-			paymentLinkRequest.put("callback_url", "http://localhost:3000/payment/"+orderId);
+			paymentLinkRequest.put("callback_url", "https://comeandbuy.vercel.app/payment/"+orderId);
+//			paymentLinkRequest.put("callback_url", "http://localhost:3000/payment/"+orderId);
 			paymentLinkRequest.put("callback_method", "get");
 			
 			PaymentLink payment = razorpay.paymentLink.create(paymentLinkRequest);
