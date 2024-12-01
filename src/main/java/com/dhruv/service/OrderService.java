@@ -1,5 +1,6 @@
 package com.dhruv.service;
 
+import com.dhruv.exception.AddressException;
 import com.dhruv.exception.OrderException;
 import com.dhruv.model.Address;
 import com.dhruv.model.Order;
@@ -9,6 +10,7 @@ import java.util.*;
 public interface OrderService  {
 
 	public Order createOrder(User user, Address shippingaddress);
+	public Order createOrderWithAddressId(User user, Long addressId) throws AddressException;
 	
 	public Order findOrderById(Long orderId) throws OrderException;
 	public List<Order> usersOrderHistory(Long userId); 

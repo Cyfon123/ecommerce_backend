@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dhruv.exception.AddressException;
 import com.dhruv.exception.OrderException;
 import com.dhruv.model.Address;
 import com.dhruv.model.Cart;
@@ -21,6 +22,8 @@ import com.dhruv.repo.OrderItemRepository;
 import com.dhruv.repo.OrderRepository;
 import com.dhruv.repo.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OrderServiceImplementation implements OrderService {
 
@@ -32,6 +35,9 @@ public class OrderServiceImplementation implements OrderService {
 	
 	@Autowired
 	private AddressRepository addressRepository;
+	
+	@Autowired
+	private AddressService addressService;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -91,6 +97,56 @@ public class OrderServiceImplementation implements OrderService {
 			orderItemRepository.save(item);
 		}
 		
+		return savedOrder;
+	}
+	
+	@Override
+	@Transactional
+	public Order createOrderWithAddressId(User user, Long addressId) throws AddressException {
+		Address address = addressService.findAddressById(addressId);
+		Cart cart = cartService.findUserCart(user.getId());
+		List<OrderItem> orderItems = new ArrayList<>();
+		
+		for(CartItem item : cart.getCartItems())
+		{
+			OrderItem orderItem = new OrderItem();
+			orderItem.setPrice(item.getPrice());
+			orderItem.setProduct(item.getProduct());
+			orderItem.setQuantity(item.getQuantity());
+			orderItem.setSize(item.getSize());
+			orderItem.setUserId(item.getUserId());
+			orderItem.setDiscountedPrice(item.getDiscountedPrice());
+			
+			OrderItem createdOrderItem = orderItemRepository.save(orderItem);
+			System.out.println("createdOrderItem" + createdOrderItem.getId());
+		
+			orderItems.add(createdOrderItem);
+		}
+			
+		Order createdOrder = new Order();
+		createdOrder.setUser(user);
+		createdOrder.setOrderItems(orderItems);
+		createdOrder.setTotalPrice(cart.getTotalPrice());
+		createdOrder.setTotalDiscountedPrice(cart.getTotalDiscountPrice());
+		createdOrder.setDiscount(cart.getDiscount());
+		createdOrder.setTotalItem(cart.getTotalItem());
+		createdOrder.setShippingAddress(address);
+		createdOrder.setOrderDate(LocalDateTime.now());
+		createdOrder.setOrderStatus("PENDING");
+		createdOrder.getPaymentDetails().setStatus("PENDING");
+		createdOrder.setCreatedAt(LocalDateTime.now());
+		
+		System.out.println("createdOrder" + createdOrder.getOrderId());
+		
+		Order savedOrder = orderRepository.save(createdOrder);
+		
+		for(OrderItem item : orderItems)
+		{
+			item.setOrder(savedOrder);
+			orderItemRepository.save(item);
+		}
+		
+		System.out.println("savedOrder" + savedOrder.getOrderId());
 		return savedOrder;
 	}
 
@@ -156,5 +212,7 @@ public class OrderServiceImplementation implements OrderService {
 		orderRepository.deleteById(orderId);
 		
 	}
+
+	
 
 }

@@ -4,6 +4,7 @@ import com.dhruv.exception.CartItemException;
 import com.dhruv.exception.UserException;
 import com.dhruv.model.CartItem;
 import com.dhruv.model.User;
+import com.dhruv.request.UpdateCartItemRequest;
 import com.dhruv.service.CartItemService;
 import com.dhruv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +52,12 @@ public class CartItemController {
 
     @PutMapping("/{cartItemId}")
     public ResponseEntity<CartItem> updateCartItem(
-            @RequestBody CartItem cartItem,
+            @RequestBody  UpdateCartItemRequest request,
             @PathVariable Long cartItemId,
             @RequestHeader("Authorization") String jwt) throws UserException, CartItemException {
         User user = userService.findUserProfileByJwt(jwt);
-        CartItem updatedCartItem = cartItemService.updateCartItem(user.getId(), cartItemId, cartItem);
+        System.out.println(user.getId() + "   " + cartItemId + "    " +request.getQuantity());
+        CartItem updatedCartItem = cartItemService.updateCartItem(user.getId(), cartItemId, request.getQuantity());
         return new ResponseEntity<>(updatedCartItem, HttpStatus.OK);
     }
 

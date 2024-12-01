@@ -1,5 +1,6 @@
 package com.dhruv.controller;
 
+import com.dhruv.exception.AddressException;
 import com.dhruv.exception.OrderException;
 import com.dhruv.exception.UserException;
 import com.dhruv.model.Address;
@@ -33,6 +34,16 @@ public class OrderController {
         Order createdOrder = orderService.createOrder(user, shippingAddress);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
+    
+    @PostMapping("/address")
+//  @Operation(description = "Create a new order")
+  public ResponseEntity<Order> createOrderWithAddressId(
+          @RequestBody Long addressId,
+          @RequestHeader("Authorization") String jwt) throws UserException, AddressException {
+      User user = userService.findUserProfileByJwt(jwt);
+      Order createdOrder = orderService.createOrderWithAddressId(user, addressId);
+      return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+  }
 
     @GetMapping("/{orderId}")
 //    @Operation(description = "Get order details by order ID")
